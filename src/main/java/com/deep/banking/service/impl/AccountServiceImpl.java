@@ -16,12 +16,22 @@ public class AccountServiceImpl implements AccountService{
         this.accountRepository = accountRepository;
     }
 
+    //method to create an Account
     @Override
     public AccountDto createAccount(AccountDto accountDto) {
         //map my account dto to jpa entity
         Account account = AccountMapper.mapToAccount(accountDto);
         Account savedAccount = accountRepository.save(account);
         return AccountMapper.mapToAccDto(savedAccount);
+    }
+
+    //method to find Account by id
+    @Override
+    public AccountDto getAccountById(long id) {
+        Account account = accountRepository
+                .findById(id)
+                .orElseThrow(() -> new RuntimeException("Account Doest not exists with provided ID"));
+        return AccountMapper.mapToAccDto(account);
     }
 
 }
