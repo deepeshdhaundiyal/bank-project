@@ -7,6 +7,9 @@ import com.deep.banking.repository.AccountRepository;
 import com.deep.banking.service.AccountService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class AccountServiceImpl implements AccountService{
 
@@ -34,4 +37,46 @@ public class AccountServiceImpl implements AccountService{
         return AccountMapper.mapToAccDto(account);
     }
 
+    //method to update the balance
+    @Override
+    public AccountDto deposit(long id, double depositAmount) {
+        Account account = accountRepository.
+                findById(id).
+                orElseThrow(() -> new RuntimeException("Account does not exists with provided id."));
+
+        double updatedBalance = account.getBalance() + depositAmount;
+        account.setBalance(updatedBalance);
+        accountRepository.save(account);
+        return AccountMapper.mapToAccDto(account);
+    }
+
+    @Override
+    public AccountDto withdraw(long id, double withdrawAmount){
+        Account account = accountRepository
+                .findById(id)
+                .orElseThrow(() -> new RuntimeException("Account does not exist with given id."));
+
+        if(account.getBalance() < withdrawAmount) { new RuntimeException("Insufficient Balance"); }
+
+        double updatedBalance = account.getBalance() - withdrawAmount;
+
+        account.setBalance(updatedBalance);
+        accountRepository.save(account);
+        return AccountMapper.mapToAccDto(account);
+    }
+
+    @Override
+    public List<AccountDto> getAllAccounts() {
+        List<Account> accountList = accountRepository.findAll();
+        List<AccountDto> accountDtoList = accountList.stream().map((account) -> AccountMapper.mapToAccDto(account)).collect(Collectors.toList());
+        return accountDtoList;
+    }
+
+    @Override
+    public void deleteAccount(long id) {
+
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException ("Account with given Id doesnot exists"));
+        accountRepository.deleteById(id);
+    }
 }

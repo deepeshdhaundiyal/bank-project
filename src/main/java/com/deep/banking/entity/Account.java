@@ -16,8 +16,8 @@ import lombok.Setter;
 public class Account
 {
 
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  //this will mark my ID as primary key
+    @Id
     private long id;
 
     @Column(name = "account_holder_name")
