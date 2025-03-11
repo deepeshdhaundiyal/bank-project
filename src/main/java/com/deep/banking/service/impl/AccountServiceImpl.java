@@ -24,6 +24,8 @@ public class AccountServiceImpl implements AccountService{
 
     private static final String TRANSACTION_TYPE_DEPOSIT = "DEPOSIT";
 
+    private static final String TRANSACTION_TYPE_WITHDRAW = "WITHDRAW";
+
     AccountServiceImpl(AccountRepository accountRepository,
                        TransactionRepository transactionRepository){
         this.accountRepository = accountRepository;
@@ -75,12 +77,20 @@ public class AccountServiceImpl implements AccountService{
                 .findById(id)
                 .orElseThrow(() -> new RuntimeException("Account does not exist with given id."));
 
-        if(account.getBalance() < withdrawAmount) { new AccountException("Insufficient Balance"); }
+        if(account.getBalance() < withdrawAmount) { throw new AccountException("Insufficient Balance"); }
 
         double updatedBalance = account.getBalance() - withdrawAmount;
 
         account.setBalance(updatedBalance);
         accountRepository.save(account);
+
+        Transaction transaction = new Transaction();
+        transaction.setAccountId(id);
+        transaction.setAmount(withdrawAmount);
+        transaction.setTransactionType(TRANSACTION_TYPE_WITHDRAW);
+        transaction.setTimeStamp(LocalDateTime.now());
+        transactionRepository.save(transaction);
+
         return AccountMapper.mapToAccDto(account);
     }
 
