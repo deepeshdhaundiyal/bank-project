@@ -133,6 +133,8 @@ public class AccountServiceImpl implements AccountService{
         transaction.setAmount(transferFundDto.amount());
         transaction.setTransactionType(TRANSACTION_TYPE_TRANSFER);
         transaction.setTimeStamp(LocalDateTime.now());
+
+        transactionRepository.save(transaction);
         //logic to debit amount fromAccount holder
         fromAccount.setBalance(
             fromAccount.getBalance() - transferFundDto.amount()
