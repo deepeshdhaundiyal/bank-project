@@ -3,12 +3,15 @@ package com.deep.banking.service.impl;
 import com.deep.banking.dto.AccountDto;
 import com.deep.banking.dto.TransferFundDto;
 import com.deep.banking.entity.Account;
+import com.deep.banking.entity.Transaction;
 import com.deep.banking.exception.AccountException;
 import com.deep.banking.mapper.AccountMapper;
 import com.deep.banking.repository.AccountRepository;
+import com.deep.banking.repository.TransactionRepository;
 import com.deep.banking.service.AccountService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,8 +20,14 @@ public class AccountServiceImpl implements AccountService{
 
     private AccountRepository accountRepository;
 
-    AccountServiceImpl(AccountRepository accountRepository){
+    private TransactionRepository transactionRepository;
+
+    private static final String TRANSACTION_TYPE_DEPOSIT = "DEPOSIT";
+
+    AccountServiceImpl(AccountRepository accountRepository,
+                       TransactionRepository transactionRepository){
         this.accountRepository = accountRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     //method to create an Account
@@ -49,6 +58,14 @@ public class AccountServiceImpl implements AccountService{
         double updatedBalance = account.getBalance() + depositAmount;
         account.setBalance(updatedBalance);
         accountRepository.save(account);
+
+        Transaction transaction = new Transaction();
+        transaction.setAccountId(id);
+        transaction.setAmount(depositAmount);
+        transaction.setTransactionType(TRANSACTION_TYPE_DEPOSIT);
+        transaction.setTimeStamp(LocalDateTime.now());
+        transactionRepository.save(transaction);
+
         return AccountMapper.mapToAccDto(account);
     }
 
