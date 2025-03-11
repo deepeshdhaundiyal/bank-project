@@ -26,6 +26,8 @@ public class AccountServiceImpl implements AccountService{
 
     private static final String TRANSACTION_TYPE_WITHDRAW = "WITHDRAW";
 
+    private static final String TRANSACTION_TYPE_TRANSFER = "TRANSFER";
+
     AccountServiceImpl(AccountRepository accountRepository,
                        TransactionRepository transactionRepository){
         this.accountRepository = accountRepository;
@@ -125,6 +127,12 @@ public class AccountServiceImpl implements AccountService{
         Account toAccount = accountRepository.findById(transferFundDto.toAccountId())
                 .orElseThrow(() -> new AccountException("Account with given Id does not exists"));
 
+
+        Transaction transaction = new Transaction();
+        transaction.setAccountId(transferFundDto.fromAccountId());
+        transaction.setAmount(transferFundDto.amount());
+        transaction.setTransactionType(TRANSACTION_TYPE_TRANSFER);
+        transaction.setTimeStamp(LocalDateTime.now());
         //logic to debit amount fromAccount holder
         fromAccount.setBalance(
             fromAccount.getBalance() - transferFundDto.amount()
