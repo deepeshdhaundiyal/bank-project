@@ -1,6 +1,7 @@
 package com.deep.banking.service;
 
 import com.deep.banking.dto.AccountDto;
+import com.deep.banking.dto.TransferFundDto;
 
 import java.util.List;
 
@@ -17,5 +18,7 @@ public interface AccountService {
     List<AccountDto> getAllAccounts();
 
     void deleteAccount(long id);
+
+    void transferFund(TransferFundDto transferFundDto);
 
 }

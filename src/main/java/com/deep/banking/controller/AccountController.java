@@ -1,6 +1,7 @@
 package com.deep.banking.controller;
 
 import com.deep.banking.dto.AccountDto;
+import com.deep.banking.dto.TransferFundDto;
 import com.deep.banking.service.AccountService;
 import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpStatus;
@@ -64,6 +65,13 @@ public class AccountController
     public String deleteAccount(@PathVariable long id){
         accountService.deleteAccount(id);
         return "Account deleted successfully!!!";
+    }
+
+    //transfer fund API
+    @PostMapping("/transfer")
+    public ResponseEntity<String> transferFund(@RequestBody  TransferFundDto transferFundDto){
+        accountService.transferFund(transferFundDto);
+        return ResponseEntity.ok("Fund Transfer Successfully!!!");
     }
 
 }

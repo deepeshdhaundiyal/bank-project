@@ -1,6 +1,7 @@
 package com.deep.banking.service.impl;
 
 import com.deep.banking.dto.AccountDto;
+import com.deep.banking.dto.TransferFundDto;
 import com.deep.banking.entity.Account;
 import com.deep.banking.exception.AccountException;
 import com.deep.banking.mapper.AccountMapper;
@@ -77,7 +78,36 @@ public class AccountServiceImpl implements AccountService{
     public void deleteAccount(long id) {
 
         Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new AccountException ("Account with given Id doesnot exists"));
+                .orElseThrow(() -> new AccountException ("Account with given Id does not exists"));
         accountRepository.deleteById(id);
+    }
+
+    @Override
+    public void transferFund(TransferFundDto transferFundDto){
+
+        //get details for account id need to debit the amount
+        Account fromAccount = accountRepository.findById(transferFundDto.fromAccountId())
+                .orElseThrow(() -> new AccountException("Account with given Id does not exists"));
+
+        //logic to handle if transfer amount is greater than balance in account
+        if (fromAccount.getBalance() < transferFundDto.amount()) {
+            throw new AccountException("Insufficient Balance!");  // Properly throwing exception
+        }
+
+        //get details for account id need to credit the amount
+        Account toAccount = accountRepository.findById(transferFundDto.toAccountId())
+                .orElseThrow(() -> new AccountException("Account with given Id does not exists"));
+
+        //logic to debit amount fromAccount holder
+        fromAccount.setBalance(
+            fromAccount.getBalance() - transferFundDto.amount()
+        );
+
+            //logic to credit amount toAccount holder
+            toAccount.setBalance(toAccount.getBalance() + transferFundDto.amount());
+
+            accountRepository.save(fromAccount);
+
+            accountRepository.save(toAccount);
     }
 }
