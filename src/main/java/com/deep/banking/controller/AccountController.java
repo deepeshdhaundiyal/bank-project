@@ -60,8 +60,8 @@ public class AccountController
     }
 
     //Delete account by id Rest API
-    @DeleteMapping()
-    public String deleteAccount(@RequestParam long id){
+    @DeleteMapping("/{id}/delete")
+    public String deleteAccount(@PathVariable long id){
         accountService.deleteAccount(id);
         return "Account deleted successfully!!!";
     }
