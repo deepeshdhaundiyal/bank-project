@@ -1,6 +1,7 @@
 package com.deep.banking.controller;
 
 import com.deep.banking.dto.AccountDto;
+import com.deep.banking.dto.TransactionDto;
 import com.deep.banking.dto.TransferFundDto;
 import com.deep.banking.service.AccountService;
 import jakarta.websocket.server.PathParam;
@@ -74,4 +75,11 @@ public class AccountController
         return ResponseEntity.ok("Fund Transfer Successfully!!!");
     }
 
+    //transaction Rest API
+    @GetMapping("{id}/transactions")
+    public ResponseEntity<List<TransactionDto>> fetchAccountTransactions(@PathVariable("id") long accountId)
+    {
+        List<TransactionDto> transactions = accountService.getAccountTransaction(accountId);
+        return ResponseEntity.ok(transactions);
+    }
 }

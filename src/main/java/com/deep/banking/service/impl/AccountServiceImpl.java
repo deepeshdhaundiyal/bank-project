@@ -1,6 +1,7 @@
 package com.deep.banking.service.impl;
 
 import com.deep.banking.dto.AccountDto;
+import com.deep.banking.dto.TransactionDto;
 import com.deep.banking.dto.TransferFundDto;
 import com.deep.banking.entity.Account;
 import com.deep.banking.entity.Transaction;
@@ -146,5 +147,24 @@ public class AccountServiceImpl implements AccountService{
             accountRepository.save(fromAccount);
 
             accountRepository.save(toAccount);
+    }
+
+    @Override
+    public List<TransactionDto> getAccountTransaction(long accountId) {
+
+        List<Transaction> transactionsList = transactionRepository.findByAccountIdOrderByTimeStampDesc(accountId);
+        return transactionsList.stream()
+                .map((transaction) -> convertEntityToDto(transaction))
+                        .collect(Collectors.toList());
+    }
+
+    private TransactionDto convertEntityToDto(Transaction transaction){
+        return new TransactionDto(
+                transaction.getId(),
+                transaction.getAccountId(),
+                transaction.getAmount(),
+                transaction.getTransactionType(),
+                transaction.getTimeStamp()
+        );
     }
 }
